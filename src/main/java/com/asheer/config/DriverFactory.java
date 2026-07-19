@@ -3,8 +3,7 @@ package com.asheer.config;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-
-import java.time.Duration;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 public class DriverFactory {
 
@@ -16,23 +15,35 @@ public class DriverFactory {
 
             WebDriverManager.chromedriver().setup();
 
-            driver = new ChromeDriver();
+            ChromeOptions options = new ChromeOptions();
 
-            driver.manage().window().maximize();
+            boolean headless = Boolean.parseBoolean(
+                    ConfigReader.get("headless"));
 
-            driver.manage().timeouts()
-                    .implicitlyWait(Duration.ofSeconds(10));
+            if (headless) {
+                options.addArguments("--headless=new");
+            }
+
+            options.addArguments("--start-maximized");
+
+            driver = new ChromeDriver(options);
 
         }
 
         return driver;
+
     }
 
     public static void quitDriver() {
 
         if (driver != null) {
+
             driver.quit();
+
             driver = null;
+
         }
+
     }
+
 }
